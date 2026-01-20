@@ -159,6 +159,21 @@
       border: 1px solid var(--border-hairline);
     }
 
+    .entry-media {
+      margin-bottom: 16px;
+    }
+
+    .entry-image {
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid var(--border-hairline);
+      margin-bottom: 8px;
+    }
+
+    .entry-image:last-child {
+      margin-bottom: 0;
+    }
+
     .entry-text {
       font-size: 1rem;
       color: var(--ink-primary);
@@ -212,10 +227,6 @@
   <div class="day-container">
     <a href="../../" class="back-link">← Back to calendar</a>
     <h1 class="day-title">January 20, 2026</h1>
-    <div class="media-gallery">
-      <img src="telegram_070904.jpg" alt="2026-01-20" class="media-item" loading="lazy" />
-      <img src="telegram_071532.jpg" alt="2026-01-20" class="media-item" loading="lazy" />
-    </div>
     <div class="entries">
       <div class="entry">
         <span class="entry-category">Shipped</span>
@@ -223,10 +234,16 @@
       </div>
       <div class="entry">
         <span class="entry-category">Shipped</span>
+        <div class="entry-media">
+          <img src="telegram_070904.jpg" alt="2026-01-20" class="entry-image" loading="lazy" />
+        </div>
         <p class="entry-text">I&#39;m shippinningggg - created a website to send daily updates with photos of what I&#39;m building through TG. Fingers crossed I keep this up #Public</p>
       </div>
       <div class="entry">
         <span class="entry-category">Shipped</span>
+        <div class="entry-media">
+          <img src="telegram_071532.jpg" alt="2026-01-20" class="entry-image" loading="lazy" />
+        </div>
         <p class="entry-text">Ashby MCP - everyone wants to use tools through Slack so I made an MCP and then ran it through an LLM (claude) with Backend on Railway so you can ping the bot in channel. Ashby APIs suck so I have to keep testing and fixing. I wish I could do the ralph loop well or at least had the $ to find out. #Public</p>
       </div>
     </div>
