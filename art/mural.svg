@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="120" viewBox="0 0 600 120">
   <rect width="600" height="120" fill="#09090b" />
   <text x="20" y="32" font-size="14" font-family="Inter, system-ui, sans-serif" fill="#fafafa" font-weight="500">INPROGRESS</text>
-  <rect x="20" y="50" width="20" height="20" rx="2" fill="#3b82f6" />
+  <rect x="20" y="50" width="20" height="20" rx="2" fill="#a855f7" />
 </svg>
