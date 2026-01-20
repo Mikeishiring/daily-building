@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2026-01-20 - Building in Public</title>
+  <meta property="og:title" content="Building in Public - 2026-01-20" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="(what you completed today) #Public" />
+  <style>
+
+    /* === Design Bible v4.1 - CSS Custom Properties === */
+    :root {
+      /* Canvas & Surface */
+      --canvas: #09090b;           /* zinc-950 */
+      --surface: #18181b;          /* zinc-900 */
+      --surface-elevated: #27272a; /* zinc-800 */
+
+      /* Ink Hierarchy */
+      --ink-primary: #fafafa;      /* zinc-50 */
+      --ink-secondary: #a1a1aa;    /* zinc-400 */
+      --ink-tertiary: #71717a;     /* zinc-500 */
+      --ink-muted: #52525b;        /* zinc-600 */
+
+      /* Borders */
+      --border-hairline: #27272a;  /* zinc-800 */
+      --border-subtle: #3f3f46;    /* zinc-700 */
+
+      /* Inverse (for selection states) */
+      --inverse-bg: #f4f4f5;       /* zinc-100 */
+      --inverse-text: #09090b;     /* zinc-950 */
+
+      /* Motion - Heavy/Snap Physics */
+      --ease-snap: cubic-bezier(0.2, 0, 0, 1);
+      --duration-fast: 120ms;
+      --duration-normal: 200ms;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scrollbar-width: none;
+    }
+    html::-webkit-scrollbar {
+      display: none;
+    }
+
+    body {
+      font-family: 'Inter', 'Geist Sans', system-ui, -apple-system, sans-serif;
+      background: var(--canvas);
+      color: var(--ink-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .day-container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 64px 32px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink-tertiary);
+      text-decoration: none;
+      font-size: 0.8125rem;
+      margin-bottom: 40px;
+      padding: 8px 12px;
+      margin-left: -12px;
+      border-radius: 6px;
+      transition:
+        color var(--duration-fast) var(--ease-snap),
+        background-color var(--duration-fast) var(--ease-snap);
+    }
+
+    .back-link:hover {
+      color: var(--ink-primary);
+      background: var(--surface);
+    }
+
+    /* Inverse on click */
+    .back-link:active {
+      background: var(--inverse-bg);
+      color: var(--inverse-text);
+    }
+
+    .day-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink-primary);
+      margin-bottom: 40px;
+    }
+
+    /* === Media Gallery === */
+    .media-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .media-item {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border-hairline);
+      background: var(--surface);
+      transition:
+        border-color var(--duration-fast) var(--ease-snap),
+        transform var(--duration-fast) var(--ease-snap);
+    }
+
+    .media-item:hover {
+      border-color: var(--border-subtle);
+    }
+
+    .media-gif {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* === Entries === */
+    .entries {
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border-hairline);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .entry {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-hairline);
+      transition: background-color var(--duration-fast) var(--ease-snap);
+    }
+
+    .entry:last-child {
+      border-bottom: none;
+    }
+
+    .entry:hover {
+      background: var(--surface-elevated);
+    }
+
+    .entry-category {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-tertiary);
+      background: var(--surface-elevated);
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-hairline);
+    }
+
+    .entry-text {
+      font-size: 1rem;
+      color: var(--ink-primary);
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+
+    .entry-tags {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      color: var(--ink-muted);
+      background: transparent;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-hairline);
+      transition:
+        color var(--duration-fast) var(--ease-snap),
+        border-color var(--duration-fast) var(--ease-snap),
+        background-color var(--duration-fast) var(--ease-snap);
+    }
+
+    .tag:hover {
+      color: var(--ink-secondary);
+      border-color: var(--border-subtle);
+      background: var(--surface-elevated);
+    }
+
+    /* === Links === */
+    a {
+      color: var(--ink-primary);
+      text-decoration: none;
+    }
+
+    /* === Focus States === */
+    :focus-visible {
+      outline: 2px solid var(--ink-tertiary);
+      outline-offset: 2px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="day-container">
+    <a href="../../" class="back-link">← Back to calendar</a>
+    <h1 class="day-title">January 20, 2026</h1>
+    <div class="entries">
+      <div class="entry">
+        <span class="entry-category">Shipped</span>
+        <p class="entry-text">(what you completed today) #Public</p>
+      </div>
+      <div class="entry">
+        <span class="entry-category">Learned</span>
+        <p class="entry-text">(something new you discovered) #Public</p>
+      </div>
+      <div class="entry">
+        <span class="entry-category">Notable</span>
+        <p class="entry-text">(anything interesting) #Public</p>
+      </div>
+      <div class="entry">
+        <span class="entry-category">Shipped</span>
+        <p class="entry-text">Setup INPROGRESS OS - automated daily accountability system #Public</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
