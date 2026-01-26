@@ -3,966 +3,252 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Building in Public</title>
+  <title>Building in Public | Mikeishiring</title>
   <meta name="description" content="A lightweight accountability tracker for daily progress." />
   <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="feed.xml" />
   <style>
-    /* === Design Bible v4.2: E-Ink on Architectural Vellum === */
-
-    /* CSS Variables - 4-tier Ink Hierarchy */
-    :root {
-      --canvas: #09090b;
-      --surface: #18181b;
-      --surface-elevated: #27272a;
-      --border-subtle: #3f3f46;
-      --border-default: #52525b;
-
-      /* Ink hierarchy */
-      --ink-primary: #fafafa;
-      --ink-secondary: #a1a1aa;
-      --ink-tertiary: #71717a;
-      --ink-muted: #52525b;
-
-      /* Accent */
-      --accent: #22c55e;
-      --accent-muted: #16a34a;
-
-      /* Rarity glows */
-      --glow-rare: rgba(34, 197, 94, 0.4);
-      --glow-epic: rgba(168, 85, 247, 0.4);
-      --glow-legendary: rgba(251, 191, 36, 0.4);
-
-      /* Heavy/Snap Physics */
-      --ease-snap: cubic-bezier(0.2, 0, 0, 1);
-      --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --duration-fast: 120ms;
-      --duration-normal: 200ms;
-    }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-
+    :root { --bg: #0a0a0a; --bg-panel: #111; --text: #e0e0e0; --text-muted: #666; --accent: #ff4500; --border: #222; --block-inactive: #1a1a1a; --block-active: #ff4500; }
+    html.light { --bg: #f5f5f5; --bg-panel: #fff; --text: #1a1a1a; --text-muted: #888; --accent: #e63e00; --border: #ddd; --block-inactive: #e0e0e0; --block-active: #e63e00; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-      background: var(--canvas);
-      color: var(--ink-primary);
-      line-height: 1.6;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    /* Skip link for accessibility */
-    .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 0;
-      background: var(--accent);
-      color: var(--canvas);
-      padding: 8px 16px;
-      z-index: 100;
-      transition: top var(--duration-fast) var(--ease-snap);
-    }
-    .skip-link:focus {
-      top: 0;
-    }
-
-    /* Dynamic column layout */
-    .container {
-      display: grid;
-      grid-template-columns: 180px 220px 1fr 280px;
-      min-height: 100vh;
-      max-width: 1600px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 1024px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-      .sidebar-left, .sidebar-right, .sidebar-projects {
-        border: none !important;
-        padding: 24px !important;
-      }
-      .preview-panel {
-        display: none;
-      }
-    }
-
-    /* Projects sidebar (far left) */
-    .sidebar-projects {
-      padding: 32px 16px;
-      border-right: 1px solid var(--border-subtle);
-      overflow-y: auto;
-      max-height: 100vh;
-      position: sticky;
-      top: 0;
-    }
-
-    .projects-title {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--ink-muted);
-      letter-spacing: 0.1em;
-      margin-bottom: 16px;
-    }
-
-    .project-card {
-      margin-bottom: 20px;
-      padding: 12px;
-      background: var(--surface);
-      border-radius: 8px;
-      border: 1px solid var(--border-subtle);
-      transition: border-color var(--duration-fast) var(--ease-snap),
-                  box-shadow var(--duration-fast) var(--ease-snap);
-    }
-
-    .project-card:hover {
-      border-color: var(--accent-muted);
-      box-shadow: 0 0 12px var(--glow-rare);
-    }
-
-    .project-name {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--ink-primary);
-      text-decoration: none;
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    a.project-name:hover {
-      color: var(--accent);
-    }
-
-    .project-progress {
-      width: 100%;
-      height: 6px;
-      background: var(--surface-elevated);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 8px;
-    }
-
-    .project-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent-muted), var(--accent));
-      border-radius: 3px;
-      transition: width 300ms var(--ease-snap);
-    }
-
-    .project-stage {
-      font-size: 0.7rem;
-      color: var(--ink-secondary);
-      font-family: 'SF Mono', Consolas, monospace;
-    }
-
-    .project-goal {
-      font-size: 0.7rem;
-      color: var(--ink-tertiary);
-      font-style: italic;
-      margin-top: 4px;
-      line-height: 1.4;
-    }
-
-    /* Left sidebar */
-    .sidebar-left {
-      padding: 32px 24px;
-      border-right: 1px solid var(--border-subtle);
-    }
-
-    .site-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 16px;
-      letter-spacing: -0.01em;
-    }
-
-    .site-description {
-      font-size: 0.9rem;
-      color: var(--ink-secondary);
-      margin-bottom: 16px;
-    }
-
-    .site-theory {
-      font-size: 0.85rem;
-      color: var(--ink-tertiary);
-      font-style: italic;
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 16px;
-    }
-
-    /* Calendar section */
-    .calendar-section {
-      padding: 32px;
-      background: var(--canvas);
-    }
-
-    .calendar-title {
-      font-size: 0.9rem;
-      font-weight: 400;
-      color: var(--ink-tertiary);
-      margin-bottom: 24px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 6px;
-    }
-
-    @media (max-width: 768px) {
-      .calendar-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 4px;
-      }
-    }
-
-    /* Day cells - base */
-    .day-cell {
-      aspect-ratio: 1;
-      border: 1px solid var(--border-subtle);
-      border-radius: 4px;
-      background: var(--surface);
-      position: relative;
-      cursor: pointer;
-      overflow: hidden;
-      min-width: 44px;
-      min-height: 44px;
-      opacity: 0;
-      transform: translateY(-100px);
-      animation: fall-in 0.4s var(--ease-bounce) forwards;
-      transition: transform var(--duration-fast) var(--ease-snap),
-                  box-shadow var(--duration-fast) var(--ease-snap),
-                  border-color var(--duration-fast) var(--ease-snap);
-    }
-
-    /* Falling animation */
-    @keyframes fall-in {
-      0% {
-        opacity: 0;
-        transform: translateY(-100px) rotate(-5deg);
-      }
-      60% {
-        opacity: 1;
-        transform: translateY(5px) rotate(1deg);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
-      }
-    }
-
-    .day-cell:hover {
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-      border-color: var(--border-default);
-      z-index: 10;
-    }
-
-    .day-cell:focus {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    .day-cell.has-content {
-      border-color: var(--accent-muted);
-      background: var(--surface-elevated);
-    }
-
-    .day-cell.has-content:hover {
-      border-color: var(--accent);
-      box-shadow: 0 8px 32px var(--glow-rare), 0 0 20px var(--glow-rare);
-    }
-
-    .day-cell.has-content:hover .day-number {
-      color: var(--accent);
-      text-shadow: 0 0 10px var(--glow-rare), 0 0 20px var(--glow-rare);
-    }
-
-    /* Recent day pulse animation */
-    .day-cell.recent {
-      animation: fall-in 0.4s var(--ease-bounce) forwards, subtle-pulse 3s ease-in-out 0.5s infinite;
-    }
-
-    @keyframes subtle-pulse {
-      0%, 100% { box-shadow: 0 0 0 0 var(--glow-rare); }
-      50% { box-shadow: 0 0 16px 4px var(--glow-rare); }
-    }
-
-    .day-cell .day-number {
-      position: absolute;
-      top: 4px;
-      right: 6px;
-      font-size: 0.65rem;
-      font-family: 'SF Mono', Consolas, monospace;
-      color: var(--ink-muted);
-      transition: color var(--duration-fast) var(--ease-snap),
-                  text-shadow var(--duration-fast) var(--ease-snap);
-    }
-
-    .day-cell.has-content .day-number {
-      color: var(--ink-tertiary);
-    }
-
-    .day-cell:hover .day-number {
-      color: var(--ink-primary);
-    }
-
-    .day-cell .day-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.9;
-      transition: opacity var(--duration-fast) var(--ease-snap),
-                  transform var(--duration-fast) var(--ease-snap);
-    }
-
-    .day-cell:hover .day-thumb {
-      opacity: 1;
-      transform: scale(1.05);
-    }
-
-    /* Empty cells with subtle pattern */
-    .day-cell.empty {
-      background:
-        repeating-linear-gradient(
-          45deg,
-          var(--surface),
-          var(--surface) 2px,
-          rgba(255,255,255,0.02) 2px,
-          rgba(255,255,255,0.02) 4px
-        );
-      cursor: default;
-    }
-
-    .day-cell.empty:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* Playful shuffle animation */
-    @keyframes shuffle {
-      0% { transform: translateY(0) rotate(0deg); }
-      25% { transform: translateY(-3px) rotate(2deg); }
-      50% { transform: translateY(0) rotate(0deg); }
-      75% { transform: translateY(-2px) rotate(-1deg); }
-      100% { transform: translateY(0) rotate(0deg); }
-    }
-
-    .day-cell.shuffling {
-      animation: shuffle 0.3s var(--ease-snap);
-    }
-
-    /* Streak visualization */
-    .day-cell.streak-start {
-      border-radius: 4px 0 0 4px;
-    }
-    .day-cell.streak-middle {
-      border-radius: 0;
-    }
-    .day-cell.streak-end {
-      border-radius: 0 4px 4px 0;
-    }
-
-    /* Right sidebar */
-    .sidebar-right {
-      padding: 32px 24px;
-      border-left: 1px solid var(--border-subtle);
-      position: relative;
-    }
-
-    .author-name {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--ink-primary);
-      margin-bottom: 8px;
-    }
-
-    .author-bio {
-      font-size: 0.85rem;
-      color: var(--ink-secondary);
-      margin-bottom: 24px;
-      line-height: 1.5;
-    }
-
-    /* Preview panel */
-    .preview-panel {
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 24px;
-      min-height: 120px;
-      transition: border-color var(--duration-fast) var(--ease-snap),
-                  box-shadow var(--duration-fast) var(--ease-snap);
-    }
-
-    .preview-panel.active {
-      border-color: var(--accent-muted);
-      box-shadow: 0 0 20px var(--glow-rare);
-    }
-
-    .preview-empty {
-      color: var(--ink-muted);
-      font-size: 0.85rem;
-      text-align: center;
-      padding: 32px 0;
-    }
-
-    .preview-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .preview-date {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--ink-primary);
-    }
-
-    .preview-relative {
-      font-size: 0.75rem;
-      color: var(--ink-tertiary);
-    }
-
-    .preview-entries {
-      list-style: none;
-    }
-
-    .preview-entry {
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border-subtle);
-      opacity: 0;
-      transform: translateX(-10px);
-      animation: slide-in 0.2s var(--ease-snap) forwards;
-    }
-
-    .preview-entry:last-child {
-      border-bottom: none;
-    }
-
-    @keyframes slide-in {
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .preview-category {
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--accent);
-      background: rgba(34, 197, 94, 0.1);
-      padding: 2px 6px;
-      border-radius: 3px;
-      margin-bottom: 4px;
-      display: inline-block;
-    }
-
-    .preview-text {
-      font-size: 0.85rem;
-      color: var(--ink-secondary);
-      line-height: 1.4;
-    }
-
-    .preview-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 6px;
-    }
-
-    .preview-tag {
-      font-size: 0.7rem;
-      color: var(--ink-tertiary);
-      background: var(--surface-elevated);
-      padding: 1px 6px;
-      border-radius: 3px;
-    }
-
-    /* Latest section polish */
-    .latest-section {
-      margin-top: 16px;
-    }
-
-    .latest-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--ink-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .latest-divider {
-      height: 1px;
-      background: linear-gradient(90deg, var(--border-default), transparent);
-      border: none;
-      margin: 8px 0 16px 0;
-    }
-
-    .latest-date {
-      font-size: 0.95rem;
-      color: var(--ink-primary);
-      margin-bottom: 4px;
-      font-weight: 500;
-    }
-
-    .entry-count {
-      display: inline-block;
-      font-size: 0.75rem;
-      color: var(--ink-tertiary);
-      background: var(--surface-elevated);
-      padding: 2px 8px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-    }
-
-    .latest-media-link {
-      display: block;
-      margin-bottom: 12px;
-      border-radius: 6px;
-      overflow: hidden;
-      transition: transform var(--duration-fast) var(--ease-snap);
-    }
-
-    .latest-media-link:hover {
-      transform: translateY(-2px);
-    }
-
-    .latest-media {
-      width: 100%;
-      border-radius: 6px;
-      border: 1px solid var(--border-subtle);
-    }
-
-    .latest-text {
-      font-size: 0.85rem;
-      color: var(--ink-secondary);
-      line-height: 1.5;
-    }
-
-    /* Links */
-    a {
-      color: var(--accent);
-      text-decoration: none;
-      transition: color var(--duration-fast) var(--ease-snap);
-    }
-
-    a:hover {
-      color: var(--ink-primary);
-    }
-
-    a:focus {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
+    body { font-family: 'Courier New', Courier, monospace; background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; overflow-x: hidden; }
+    .layout { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg-panel); }
+    .brand { display: flex; align-items: center; gap: 8px; }
+    .brand-logo { width: 28px; height: 28px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #000; }
+    .brand-name { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
+    .brand-sub { font-size: 10px; color: var(--text-muted); margin-left: 8px; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .social-icons { display: flex; gap: 8px; }
+    .social-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid var(--border); color: var(--text-muted); text-decoration: none; transition: all 0.15s ease; }
+    .social-icon:hover { background: var(--accent); border-color: var(--accent); color: #000; text-decoration: none; }
+    .social-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .theme-toggle { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.15s ease; }
+    .theme-toggle:hover { background: var(--accent); border-color: var(--accent); color: #000; }
+    .content-viewer { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px 16px; overflow-y: auto; }
+    .day-header { text-align: center; margin-bottom: 20px; }
+    .day-number { font-size: 36px; font-weight: 700; color: var(--accent); display: block; letter-spacing: 3px; }
+    .day-date { font-size: 12px; color: var(--text-muted); letter-spacing: 2px; margin-top: 4px; display: block; }
+    .entries-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 12px; }
+    .entry { background: var(--bg-panel); border-radius: 4px; padding: 16px; border-left: 3px solid var(--accent); }
+    @keyframes entry-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .entry.animate { animation: entry-fade-in 0.3s ease-out forwards; }
+    .entry .tag-title { font-size: 10px; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .entry .text { font-size: 14px; line-height: 1.6; color: var(--text); }
+    .entry-images { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .entry-images img { max-width: 100%; border-radius: 4px; border: 1px solid var(--border); }
+    .entry-images.multiple img { max-width: calc(50% - 4px); }
+    .no-entries { text-align: center; color: var(--text-muted); font-size: 12px; padding: 40px 20px; }
+    .timeline-strip { height: 80px; background: var(--bg-panel); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; user-select: none; flex-shrink: 0; }
+    .nav-arrow { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted); font-size: 14px; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .nav-arrow:hover, .nav-arrow:active { background: var(--accent); border-color: var(--accent); color: #000; }
+    .strip-container { display: flex; gap: 4px; overflow: hidden; padding: 4px 0; flex: 1; justify-content: center; }
+    .strip-day { width: 36px; height: 48px; background: var(--block-inactive); border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; position: relative; }
+    .strip-day:hover { background: #333; }
+    html.light .strip-day:hover { background: #ccc; }
+    .strip-day.active { background: var(--accent); }
+    .strip-day.active .strip-day-num, .strip-day.active .strip-day-label { color: #000; }
+    .strip-day.selected { transform: scale(1.12); z-index: 10; box-shadow: 0 0 12px var(--accent); }
+    .strip-day-num { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1; }
+    .strip-day-label { font-size: 7px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .year-minimap { height: 56px; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 16px; cursor: crosshair; flex-shrink: 0; }
+    .minimap-months { display: flex; justify-content: space-between; width: 100%; max-width: 730px; font-size: 6px; color: var(--text-muted); margin-bottom: 4px; letter-spacing: 0.5px; }
+    .minimap-grid { display: flex; gap: 1px; width: 100%; max-width: 730px; }
+    .minimap-day { flex: 1; height: 12px; background: var(--block-inactive); cursor: pointer; transition: background 0.1s ease; min-width: 1px; }
+    .minimap-day:hover { background: #444; }
+    html.light .minimap-day:hover { background: #bbb; }
+    .minimap-day.active { background: var(--accent); }
+    .minimap-day.selected { background: #fff; box-shadow: 0 0 4px #fff; }
+    html.light .minimap-day.selected { background: #000; box-shadow: 0 0 4px #000; }
+    @media (min-width: 640px) {
+      .header { padding: 16px 24px; }
+      .brand-logo { width: 32px; height: 32px; font-size: 16px; }
+      .brand-name { font-size: 14px; letter-spacing: 3px; }
+      .content-viewer { padding: 32px 24px; }
+      .day-number { font-size: 48px; letter-spacing: 4px; }
+      .day-date { font-size: 14px; }
+      .entries-container { gap: 16px; }
+      .entry { padding: 24px; }
+      .entry .tag-title { font-size: 11px; margin-bottom: 10px; }
+      .entry .text { font-size: 16px; line-height: 1.7; }
+      .timeline-strip { height: 100px; gap: 8px; padding: 0 24px; }
+      .nav-arrow { width: 40px; height: 40px; font-size: 16px; }
+      .strip-container { gap: 6px; }
+      .strip-day { width: 48px; height: 60px; border-radius: 4px; }
+      .strip-day-num { font-size: 18px; }
+      .strip-day-label { font-size: 8px; }
+      .year-minimap { height: 70px; padding: 12px 24px; }
+      .minimap-months { font-size: 8px; }
+      .minimap-day { height: 16px; }
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
-  <a href="#main-content" class="skip-link">Skip to content</a>
-  <div class="container">
-    <aside class="sidebar-projects">
-      <h2 class="projects-title">PROJECTS</h2>
-      <div class="project-card" data-project="progressos" data-total-stages="5">
-        <a href="https://github.com/Mikeishiring/ProgressOS" class="project-name" target="_blank" rel="noopener">ProgressOS</a>
-        <div class="project-progress">
-          <div class="project-progress-bar" style="width: 60%"></div>
+  <div class="layout">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-logo">P</div>
+        <span class="brand-name">Building in Public</span>
+        <span class="brand-sub">by Mikeishiring</span>
+      </div>
+      <div class="header-actions">
+        <div class="social-icons">
+          <a href="https://twitter.com/mikeishiring" target="_blank" rel="noopener" class="social-icon" aria-label="Twitter">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://github.com/mikeishiring" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
+            <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
         </div>
-        <div class="project-stage">Stage 3: MVP</div>
-        <div class="project-goal">"GitHub sidebar complete"</div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀️</button>
       </div>
-      <div class="project-card" data-project="twitterbot" data-total-stages="5">
-        <a href="https://github.com/Mikeishiring/TwitterBot" class="project-name" target="_blank" rel="noopener">TwitterBot</a>
-        <div class="project-progress">
-          <div class="project-progress-bar" style="width: 20%"></div>
-        </div>
-        <div class="project-stage">Stage 1: Research</div>
-        <div class="project-goal">"Research phase"</div>
+    </header>
+    <main class="content-viewer" id="contentViewer">
+      <div class="day-header">
+        <span class="day-number" id="dayNumber">DAY 001</span>
+        <span class="day-date" id="dayDate">2026-01-01</span>
       </div>
-      <div class="project-card" data-project="web3-jobs" data-total-stages="5">
-        <div class="project-name">Web3 Jobs</div>
-        <div class="project-progress">
-          <div class="project-progress-bar" style="width: 80%"></div>
-        </div>
-        <div class="project-stage">Stage 4: Polish</div>
-        <div class="project-goal">"Production-ready job board"</div>
-      </div>
-      <div class="project-card" data-project="social-graph" data-total-stages="5">
-        <div class="project-name">Social Graph</div>
-        <div class="project-progress">
-          <div class="project-progress-bar" style="width: 20%"></div>
-        </div>
-        <div class="project-stage">Stage 1: Research</div>
-        <div class="project-goal">"Twitter network visualization"</div>
-      </div>
-      <div class="project-card" data-project="talent-passport" data-total-stages="5">
-        <div class="project-name">Talent Passport</div>
-        <div class="project-progress">
-          <div class="project-progress-bar" style="width: 60%"></div>
-        </div>
-        <div class="project-stage">Stage 3: MVP</div>
-        <div class="project-goal">"CV parsing &amp; talent profiles"</div>
-      </div>
-      <div class="project-card" data-project="timeless-wiki" data-total-stages="5">
-        <div class="project-name">Timeless Wiki</div>
-        <div class="project-progress">
-          <div class="project-progress-bar" style="width: 80%"></div>
-        </div>
-        <div class="project-stage">Stage 4: Polish</div>
-        <div class="project-goal">"Demo polish in progress"</div>
-      </div>
-    </aside>
-    <aside class="sidebar-left">
-      <h1 class="site-title">Building in Public</h1>
-      <p class="site-description">A lightweight accountability tracker for daily progress.</p>
-      <p class="site-theory">It exists under the theory that doing anything consistently for a year is bound to spark change.</p>
-    </aside>
-    <main class="calendar-section" id="main-content">
-      <h2 class="calendar-title">Days of January 1st to December 31st</h2>
-      <div class="calendar-grid" id="calendar-grid">
-        <!-- Calendar populated by JS -->
-      </div>
+      <div class="entries-container" id="entriesContainer"></div>
     </main>
-    <aside class="sidebar-right">
-      <div class="author-name">Mikeishiring</div>
-      <p class="author-bio">Shipping daily, one commit at a time</p>
-      <div class="preview-panel" id="preview-panel">
-        <div class="preview-empty">Hover over a day to preview</div>
+    <nav class="timeline-strip" id="timelineStrip">
+      <button class="nav-arrow" id="navPrev" aria-label="Previous day">◄</button>
+      <div class="strip-container" id="stripContainer"></div>
+      <button class="nav-arrow" id="navNext" aria-label="Next day">►</button>
+    </nav>
+    <footer class="year-minimap" id="yearMinimap">
+      <div class="minimap-months">
+        <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
+        <span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span>
       </div>
-      <div class="latest-section">
-        <span class="latest-label">LATEST</span>
-        <hr class="latest-divider" />
-        <div class="latest-date">January 26</div>
-        <span class="entry-count">3 entries</span>
-        <p class="latest-text">Purning further #Public</p>
-      </div>
-    </aside>
+      <div class="minimap-grid" id="minimapGrid"></div>
+    </footer>
   </div>
   <script>
     fetch('activity.json')
       .then(r => r.json())
       .then(data => {
-        const grid = document.getElementById('calendar-grid');
-        const previewPanel = document.getElementById('preview-panel');
-        const dayMap = {};
-        data.days.forEach(d => { dayMap[d.date] = d; });
-
-        const year = new Date().getFullYear();
-        const startDate = new Date(year, 0, 1);
-        const endDate = new Date(year, 11, 31);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        // Calculate recent threshold (last 3 days)
-        const recentThreshold = new Date(today);
-        recentThreshold.setDate(recentThreshold.getDate() - 3);
-
-        // Build list of dates with content for streak detection
-        const contentDates = new Set(data.days.map(d => d.date));
-
-        // Track all cells for shuffle animation
-        const allCells = [];
-
-        let dayOfYear = 1;
-        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-          const dateStr = d.toISOString().split('T')[0];
-          const dayData = dayMap[dateStr];
-          const hasContent = !!dayData;
-
-          const cell = document.createElement('a');
-          cell.className = 'day-cell';
-          cell.dataset.date = dateStr;
-
-          // Staggered fall animation delay
-          const fallDelay = Math.floor(dayOfYear / 8) * 30 + (dayOfYear % 8) * 15;
-          cell.style.animationDelay = fallDelay + 'ms';
-
-          if (hasContent) {
-            cell.classList.add('has-content');
-            cell.href = 'day/' + dateStr + '/';
-            cell.setAttribute('aria-label', dateStr + ': ' + dayData.count + ' entries');
-
-            // Check if recent
-            const cellDate = new Date(dateStr);
-            if (cellDate >= recentThreshold && cellDate <= today) {
-              cell.classList.add('recent');
-            }
-
-            // Streak detection
-            const prevDate = new Date(d);
-            prevDate.setDate(prevDate.getDate() - 1);
-            const nextDate = new Date(d);
-            nextDate.setDate(nextDate.getDate() + 1);
-            const prevStr = prevDate.toISOString().split('T')[0];
-            const nextStr = nextDate.toISOString().split('T')[0];
-            const hasPrev = contentDates.has(prevStr);
-            const hasNext = contentDates.has(nextStr);
-
-            if (hasPrev && hasNext) {
-              cell.classList.add('streak-middle');
-            } else if (hasPrev && !hasNext) {
-              cell.classList.add('streak-end');
-            } else if (!hasPrev && hasNext) {
-              cell.classList.add('streak-start');
-            }
-
-            // Hover preview handler
-            cell.addEventListener('mouseenter', () => showPreview(dayData, dateStr));
-            cell.addEventListener('mouseleave', clearPreview);
-          } else {
-            cell.classList.add('empty');
-            cell.setAttribute('aria-label', 'Day ' + dayOfYear + ' - No entries');
-            cell.removeAttribute('href');
-            cell.style.pointerEvents = 'none';
-          }
-
-          const num = document.createElement('span');
-          num.className = 'day-number';
-          num.textContent = dayOfYear;
-          cell.appendChild(num);
-
-          if (dayData && dayData.thumb) {
-            const img = document.createElement('img');
-            img.className = 'day-thumb';
-            img.src = 'day/' + dateStr + '/' + dayData.thumb;
-            img.alt = dateStr;
-            img.loading = 'lazy';
-            cell.appendChild(img);
-          }
-
-          grid.appendChild(cell);
-          allCells.push(cell);
-          dayOfYear++;
-        }
-
-        // Preview panel functions
-        function showPreview(dayData, dateStr) {
-          previewPanel.classList.add('active');
-
-          const date = new Date(dateStr);
-          const displayDate = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-          const daysAgo = Math.floor((today - date) / (1000 * 60 * 60 * 24));
-          const relativeText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago';
-
-          let html = '<div class="preview-header">';
-          html += '<span class="preview-date">' + displayDate + '</span>';
-          html += '<span class="preview-relative">' + relativeText + '</span>';
-          html += '</div>';
-          html += '<ul class="preview-entries">';
-
-          if (dayData.entries && dayData.entries.length > 0) {
-            dayData.entries.forEach((entry, i) => {
-              html += '<li class="preview-entry" style="animation-delay: ' + (i * 50) + 'ms">';
-              if (entry.category) {
-                html += '<span class="preview-category">' + escapeHtml(entry.category) + '</span>';
-              }
-              html += '<p class="preview-text">' + escapeHtml(entry.text) + '</p>';
-              if (entry.tags && entry.tags.length > 0) {
-                html += '<div class="preview-tags">';
-                entry.tags.forEach(tag => {
-                  html += '<span class="preview-tag">#' + escapeHtml(tag) + '</span>';
-                });
-                html += '</div>';
-              }
-              html += '</li>';
-            });
-          } else {
-            html += '<li class="preview-entry"><p class="preview-text">' + dayData.count + ' entries</p></li>';
-          }
-
-          html += '</ul>';
-          previewPanel.innerHTML = html;
-        }
-
-        function clearPreview() {
-          previewPanel.classList.remove('active');
-          previewPanel.innerHTML = '<div class="preview-empty">Hover over a day to preview</div>';
-        }
-
-        function escapeHtml(text) {
-          const div = document.createElement('div');
-          div.textContent = text;
-          return div.innerHTML;
-        }
-
-        // Playful shuffle animation for cells outside viewport
-        function shuffleRandomCells() {
-          const viewportTop = window.scrollY;
-          const viewportBottom = viewportTop + window.innerHeight;
-
-          // Find cells outside viewport
-          const outsideCells = allCells.filter(cell => {
-            const rect = cell.getBoundingClientRect();
-            const cellTop = rect.top + window.scrollY;
-            const cellBottom = rect.bottom + window.scrollY;
-            return cellBottom < viewportTop || cellTop > viewportBottom;
-          });
-
-          if (outsideCells.length < 3) return;
-
-          // Pick 2-4 random cells
-          const count = Math.floor(Math.random() * 3) + 2;
-          const shuffled = outsideCells.sort(() => Math.random() - 0.5).slice(0, count);
-
-          shuffled.forEach(cell => {
-            cell.classList.add('shuffling');
-            cell.addEventListener('animationend', () => {
-              cell.classList.remove('shuffling');
-            }, { once: true });
-          });
-        }
-
-        // Start shuffle loop after initial animations complete
-        setTimeout(() => {
-          setInterval(shuffleRandomCells, 4000 + Math.random() * 2000);
-        }, 3000);
-
-        // === PROJECT TIMELINE PROGRESS ===
-        // Load projects.json and update progress bars based on hovered/selected day
-        let projectsData = null;
-        fetch('projects.json')
-          .then(r => r.ok ? r.json() : null)
-          .then(data => { projectsData = data; })
-          .catch(() => {});
-
-        // Get stage info for a project at a specific date
-        function getProjectStateAtDate(project, dateStr) {
-          if (!project.history || project.history.length === 0) {
-            return { stage: project.current_stage, goal: project.current_goal };
-          }
-
-          // Find most recent history entry on or before date
-          const entries = project.history
-            .filter(h => h.date <= dateStr)
-            .sort((a, b) => b.date.localeCompare(a.date));
-
-          if (entries.length === 0) {
-            return { stage: 0, goal: null };  // Project didn't exist yet
-          }
-
-          return { stage: entries[0].stage, goal: entries[0].goal };
-        }
-
-        // Update all project cards to show state at a specific date
-        function updateProjectsForDate(dateStr) {
-          if (!projectsData || !projectsData.projects) return;
-
-          document.querySelectorAll('.project-card').forEach(card => {
-            const projectId = card.dataset.project;
-            const totalStages = parseInt(card.dataset.totalStages) || 5;
-
-            const project = projectsData.projects.find(p =>
-              p.name.replace(/ /g, '-').toLowerCase() === projectId
-            );
-
-            if (!project) return;
-
-            const state = getProjectStateAtDate(project, dateStr);
-            const progressPercent = state.stage > 0
-              ? Math.round((state.stage / totalStages) * 100)
-              : 0;
-
-            // Update progress bar
-            const progressBar = card.querySelector('.project-progress-bar');
-            if (progressBar) {
-              progressBar.style.width = progressPercent + '%';
-            }
-
-            // Update stage text
-            const stageEl = card.querySelector('.project-stage');
-            if (stageEl) {
-              if (state.stage === 0) {
-                stageEl.textContent = 'Not started yet';
-              } else {
-                const stageName = project.stages[state.stage - 1]?.name || '';
-                stageEl.textContent = 'Stage ' + state.stage + ': ' + stageName;
-              }
-            }
-
-            // Update goal text
-            const goalEl = card.querySelector('.project-goal');
-            if (goalEl) {
-              if (state.goal) {
-                goalEl.textContent = '"' + state.goal + '"';
-                goalEl.style.display = '';
-              } else {
-                goalEl.style.display = 'none';
-              }
-            }
-
-            // Fade out cards for projects that didn't exist yet
-            card.style.opacity = state.stage === 0 ? '0.3' : '1';
-          });
-        }
-
-        // Reset projects to current state
-        function resetProjectsToCurrentState() {
-          if (!projectsData || !projectsData.projects) return;
-
-          document.querySelectorAll('.project-card').forEach(card => {
-            const projectId = card.dataset.project;
-            const project = projectsData.projects.find(p =>
-              p.name.replace(/ /g, '-').toLowerCase() === projectId
-            );
-
-            if (!project) return;
-
-            // Reset to current values
-            const progressBar = card.querySelector('.project-progress-bar');
-            if (progressBar) {
-              progressBar.style.width = project.progress_percent + '%';
-            }
-
-            const stageEl = card.querySelector('.project-stage');
-            if (stageEl) {
-              stageEl.textContent = 'Stage ' + project.current_stage + ': ' + project.stage_name;
-            }
-
-            const goalEl = card.querySelector('.project-goal');
-            if (goalEl) {
-              if (project.current_goal) {
-                goalEl.textContent = '"' + project.current_goal + '"';
-                goalEl.style.display = '';
-              }
-            }
-
-            card.style.opacity = '1';
-          });
-        }
-
-        // Hook into day cell hover/click events
-        document.querySelectorAll('.day-cell[data-date]').forEach(cell => {
-          const dateStr = cell.dataset.date;
-
-          // Update projects on hover
-          cell.addEventListener('mouseenter', () => {
-            updateProjectsForDate(dateStr);
-          });
-
-          // Reset on mouse leave
-          cell.addEventListener('mouseleave', () => {
-            resetProjectsToCurrentState();
-          });
+        const dayData = {};
+        data.days.forEach(d => {
+          const date = new Date(d.date);
+          const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+          dayData[dayOfYear] = { date: d.date, entries: d.entries || [{ category: 'Entry', text: d.count + ' entries', tags: [], images: [] }] };
         });
+        initTimeline(dayData);
+      })
+      .catch(err => { console.error('Failed to load:', err); initTimeline({}); });
+
+    function initTimeline(dayData) {
+      const year = new Date().getFullYear();
+      const daysInYear = 365;
+      const today = new Date();
+      const todayDayOfYear = Math.floor((today - new Date(year, 0, 0)) / (1000 * 60 * 60 * 24));
+      let selectedDayNum = todayDayOfYear > 0 ? todayDayOfYear : 1;
+      const VISIBLE_DAYS = window.innerWidth < 640 ? 4 : 7;
+      const dayNumberEl = document.getElementById('dayNumber');
+      const dayDateEl = document.getElementById('dayDate');
+      const entriesContainer = document.getElementById('entriesContainer');
+      const stripContainer = document.getElementById('stripContainer');
+      const minimapGrid = document.getElementById('minimapGrid');
+
+      function renderContent() {
+        const dayNum = selectedDayNum;
+        const dayDate = new Date(year, 0, dayNum);
+        const dateStr = dayDate.toISOString().split('T')[0];
+        dayNumberEl.textContent = 'DAY ' + String(dayNum).padStart(3, '0');
+        dayDateEl.textContent = dateStr;
+        const data = dayData[dayNum];
+        if (!data || !data.entries || data.entries.length === 0) {
+          entriesContainer.innerHTML = '<div class="no-entries">// No entries logged for this day</div>';
+          return;
+        }
+        let html = '';
+        data.entries.forEach((e, i) => {
+          const publicTag = (e.tags && e.tags.find(t => t.toLowerCase() === 'public')) || (e.category || '');
+          let imagesHtml = '';
+          if (e.images && e.images.length > 0) {
+            const imgClass = e.images.length === 1 ? 'single' : 'multiple';
+            imagesHtml = '<div class="entry-images ' + imgClass + '">' + e.images.map(img => '<img src="day/' + dateStr + '/media/' + img + '" alt="" loading="lazy" />').join('') + '</div>';
+          }
+          html += '<div class="entry animate" style="animation-delay: ' + (i * 0.05) + 's">' + (publicTag ? '<div class="tag-title">#' + publicTag + '</div>' : '') + '<div class="text">' + (e.text || '') + '</div>' + imagesHtml + '</div>';
+        });
+        entriesContainer.innerHTML = html;
+      }
+
+      function renderStrip() {
+        stripContainer.innerHTML = '';
+        const startDay = Math.max(1, selectedDayNum - VISIBLE_DAYS);
+        const endDay = Math.min(daysInYear, selectedDayNum + VISIBLE_DAYS);
+        for (let d = startDay; d <= endDay; d++) {
+          const dayDate = new Date(year, 0, d);
+          const monthName = dayDate.toLocaleString('en', { month: 'short' }).toUpperCase();
+          const dayOfMonth = dayDate.getDate();
+          const hasEntries = dayData[d] !== undefined;
+          const block = document.createElement('div');
+          block.className = 'strip-day' + (hasEntries ? ' active' : '') + (d === selectedDayNum ? ' selected' : '');
+          block.dataset.day = d;
+          block.innerHTML = '<span class="strip-day-num">' + dayOfMonth + '</span><span class="strip-day-label">' + monthName + '</span>';
+          block.addEventListener('click', () => selectDay(d));
+          stripContainer.appendChild(block);
+        }
+      }
+
+      function renderMinimap() {
+        minimapGrid.innerHTML = '';
+        for (let d = 1; d <= daysInYear; d++) {
+          const hasEntries = dayData[d] !== undefined;
+          const block = document.createElement('div');
+          block.className = 'minimap-day' + (hasEntries ? ' active' : '') + (d === selectedDayNum ? ' selected' : '');
+          block.dataset.day = d;
+          block.addEventListener('click', () => selectDay(d));
+          minimapGrid.appendChild(block);
+        }
+      }
+
+      function updateMinimap() {
+        document.querySelectorAll('.minimap-day').forEach(block => {
+          block.classList.toggle('selected', parseInt(block.dataset.day) === selectedDayNum);
+        });
+      }
+
+      function selectDay(dayNum) {
+        selectedDayNum = dayNum;
+        renderContent();
+        renderStrip();
+        updateMinimap();
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); selectDay(Math.max(1, selectedDayNum - 1)); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); selectDay(Math.min(daysInYear, selectedDayNum + 1)); }
       });
+
+      document.getElementById('navPrev').addEventListener('click', () => selectDay(Math.max(1, selectedDayNum - 1)));
+      document.getElementById('navNext').addEventListener('click', () => selectDay(Math.min(daysInYear, selectedDayNum + 1)));
+
+      let touchStartX = 0;
+      document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      document.addEventListener('touchend', (e) => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) { if (diff > 0) selectDay(Math.min(daysInYear, selectedDayNum + 1)); else selectDay(Math.max(1, selectedDayNum - 1)); }
+      }, { passive: true });
+
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) { html.classList.add(savedTheme); themeToggle.textContent = savedTheme === 'light' ? '🌙' : '☀️'; }
+      themeToggle.addEventListener('click', () => {
+        const isLight = html.classList.contains('light');
+        html.classList.remove('light', 'dark');
+        html.classList.add(isLight ? 'dark' : 'light');
+        themeToggle.textContent = isLight ? '☀️' : '🌙';
+        localStorage.setItem('theme', isLight ? 'dark' : 'light');
+      });
+
+      renderContent();
+      renderStrip();
+      renderMinimap();
+    }
 </script>
 </body>
 </html>
