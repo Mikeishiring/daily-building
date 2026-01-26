@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Building in Public</title>
     <link>http://localhost</link>
-    <description>Daily progress log</description>
+    <description>A lightweight accountability tracker for daily progress.</description>
+    <atom:link href="http://localhost/feed.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>2026-01-20</title>
+      <title>2026-01-21: 1 updates</title>
+      <link>http://localhost/day/2026-01-21/</link>
+      <guid isPermaLink="true">http://localhost/day/2026-01-21/</guid>
+      <description>Training an agent on agency is never fun but here we are. #Public</description>
+      <pubDate>Wed, 21 Jan 2026 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>2026-01-20: 3 updates</title>
       <link>http://localhost/day/2026-01-20/</link>
-      <guid>http://localhost/day/2026-01-20/</guid>
+      <guid isPermaLink="true">http://localhost/day/2026-01-20/</guid>
       <description>Setup INPROGRESS OS - automated daily accountability system #Public</description>
       <pubDate>Tue, 20 Jan 2026 00:00:00 GMT</pubDate>
     </item>

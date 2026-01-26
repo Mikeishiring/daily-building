@@ -1,400 +1,105 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Building in Public</title>
-  <meta name="description" content="A lightweight accountability tracker for daily progress." />
+  <meta name="description" content="A lightweight accountability tracker for daily progress.">
   <style>
-
-    /* === Design Bible v4.1 - CSS Custom Properties === */
     :root {
-      /* Canvas & Surface */
-      --canvas: #09090b;           /* zinc-950 */
-      --surface: #18181b;          /* zinc-900 */
-      --surface-elevated: #27272a; /* zinc-800 */
-
-      /* Ink Hierarchy */
-      --ink-primary: #fafafa;      /* zinc-50 */
-      --ink-secondary: #a1a1aa;    /* zinc-400 */
-      --ink-tertiary: #71717a;     /* zinc-500 */
-      --ink-muted: #52525b;        /* zinc-600 */
-
-      /* Borders */
-      --border-hairline: #27272a;  /* zinc-800 */
-      --border-subtle: #3f3f46;    /* zinc-700 */
-
-      /* Inverse (for selection states) */
-      --inverse-bg: #f4f4f5;       /* zinc-100 */
-      --inverse-text: #09090b;     /* zinc-950 */
-
-      /* Rarity Glows */
-      --glow-rare: rgba(59, 130, 246, 0.15);     /* blue */
-      --glow-epic: rgba(168, 85, 247, 0.15);     /* purple */
-      --glow-legendary: rgba(245, 158, 11, 0.15); /* amber */
-
-      /* Motion - Heavy/Snap Physics */
-      --ease-snap: cubic-bezier(0.2, 0, 0, 1);
-      --duration-fast: 120ms;
-      --duration-normal: 200ms;
+      --bg: #f5f1ea;
+      --ink: #1c1b17;
+      --muted: #6f675c;
+      --accent: #c07a4d;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html {
-      scrollbar-width: none; /* Firefox */
-    }
-    html::-webkit-scrollbar {
-      display: none; /* Chrome/Safari */
-    }
-
+    * { box-sizing: border-box; }
     body {
-      font-family: 'Inter', 'Geist Sans', system-ui, -apple-system, sans-serif;
-      background: var(--canvas);
-      color: var(--ink-primary);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      background: radial-gradient(circle at top, #fffaf1, var(--bg));
+      color: var(--ink);
     }
-
-    .container {
-      display: grid;
-      grid-template-columns: 260px 1fr 320px;
-      min-height: 100vh;
-      max-width: 1600px;
+    header {
+      padding: 48px 24px 16px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      letter-spacing: 0.5px;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+    }
+    main {
+      max-width: 760px;
       margin: 0 auto;
-    }
-
-    @media (max-width: 1200px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-      .sidebar-left, .sidebar-right {
-        border: none !important;
-        padding: 32px 24px !important;
-      }
-    }
-
-    /* === Left Sidebar === */
-    .sidebar-left {
-      padding: 48px 32px;
-      border-right: 1px solid var(--border-hairline);
-      display: flex;
-      flex-direction: column;
+      padding: 24px;
+      display: grid;
       gap: 24px;
     }
-
-    .site-title {
-      font-size: 0.875rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--ink-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .post {
+      padding: 20px 20px 18px;
+      border: 1px solid #e3d7c8;
+      border-radius: 16px;
+      background: #fffdfa;
+      box-shadow: 0 8px 20px rgba(28, 27, 23, 0.05);
     }
-
-    .site-description {
-      font-size: 0.9375rem;
-      color: var(--ink-secondary);
-      line-height: 1.6;
-    }
-
-    .site-theory {
-      font-size: 0.8125rem;
-      color: var(--ink-tertiary);
-      border-top: 1px solid var(--border-hairline);
-      padding-top: 24px;
-      line-height: 1.7;
-    }
-
-    /* === Calendar Section === */
-    .calendar-section {
-      padding: 48px 40px;
-      background: var(--surface);
-    }
-
-    .calendar-title {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--ink-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 32px;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
-      gap: 6px;
-    }
-
-    @media (max-width: 768px) {
-      .calendar-grid {
-        grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
-      }
-    }
-
-    /* === Day Cells === */
-    .day-cell {
-      aspect-ratio: 1;
-      border: 1px solid var(--border-hairline);
-      border-radius: 4px;
-      background: var(--canvas);
-      position: relative;
-      cursor: pointer;
-      overflow: hidden;
-
-      /* Heavy/Snap Motion */
-      transition:
-        transform var(--duration-fast) var(--ease-snap),
-        background-color var(--duration-fast) var(--ease-snap),
-        border-color var(--duration-fast) var(--ease-snap),
-        box-shadow var(--duration-normal) var(--ease-snap);
-    }
-
-    .day-cell:hover {
-      transform: scale(1.04);
-      background: var(--surface-elevated);
-      border-color: var(--border-subtle);
-    }
-
-    /* Inverse state on active/focus */
-    .day-cell:active,
-    .day-cell:focus {
-      background: var(--inverse-bg);
-      transform: scale(0.98);
-    }
-    .day-cell:active .day-number,
-    .day-cell:focus .day-number {
-      color: var(--inverse-text);
-    }
-
-    .day-cell.has-content {
-      border-color: var(--border-subtle);
-      background: var(--surface);
-    }
-
-    .day-cell.has-content:hover {
-      border-color: var(--ink-tertiary);
-    }
-
-    /* Rarity Glows for special days */
-    .day-cell.rarity-rare:hover {
-      box-shadow: 0 0 20px var(--glow-rare);
-    }
-    .day-cell.rarity-epic:hover {
-      box-shadow: 0 0 24px var(--glow-epic);
-    }
-    .day-cell.rarity-legendary:hover {
-      box-shadow: 0 0 28px var(--glow-legendary);
-    }
-
-    .day-cell .day-number {
-      position: absolute;
-      top: 4px;
-      right: 6px;
-      font-size: 0.625rem;
-      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-      font-variant-numeric: tabular-nums;
-      color: var(--ink-muted);
-      z-index: 2;
-      transition: color var(--duration-fast) var(--ease-snap);
-    }
-
-    .day-cell .day-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.85;
-      transition: opacity var(--duration-normal) var(--ease-snap);
-    }
-
-    .day-cell:hover .day-thumb {
-      opacity: 1;
-    }
-
-    .day-cell.empty {
-      background: var(--canvas);
-      border-color: transparent;
-      cursor: default;
-    }
-    .day-cell.empty:hover {
-      transform: none;
-      background: var(--canvas);
-    }
-
-    /* === Right Sidebar === */
-    .sidebar-right {
-      padding: 48px 32px;
-      border-left: 1px solid var(--border-hairline);
+    .meta {
       display: flex;
-      flex-direction: column;
-    }
-
-    .author-name {
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--ink-primary);
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--muted);
       margin-bottom: 8px;
     }
-
-    .author-bio {
-      font-size: 0.875rem;
-      color: var(--ink-secondary);
+    .skill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(192, 122, 77, 0.12);
+      color: var(--accent);
+      text-transform: lowercase;
+    }
+    .text {
+      font-size: 1.05rem;
       line-height: 1.6;
-      margin-bottom: 32px;
+      white-space: pre-wrap;
     }
-
-    .latest-divider {
-      font-size: 0.5rem;
-      color: var(--ink-muted);
-      letter-spacing: 2px;
-      margin-bottom: 24px;
-      opacity: 0.5;
+    .media {
+      margin-top: 12px;
+      display: grid;
+      gap: 12px;
     }
-
-    .latest-date {
-      font-size: 0.8125rem;
-      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-      font-variant-numeric: tabular-nums;
-      color: var(--ink-tertiary);
-      margin-bottom: 16px;
+    .media img {
+      max-width: 100%;
+      border-radius: 12px;
+      border: 1px solid #eadfd2;
     }
-
-    .latest-media-link {
-      display: block;
-      margin-bottom: 16px;
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid var(--border-hairline);
-      transition:
-        border-color var(--duration-fast) var(--ease-snap),
-        transform var(--duration-fast) var(--ease-snap);
+    .edited {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
     }
-
-    .latest-media-link:hover {
-      border-color: var(--border-subtle);
-      transform: scale(1.01);
-    }
-
-    .latest-media {
-      width: 100%;
-      display: block;
-    }
-
-    .latest-text {
-      font-size: 0.875rem;
-      color: var(--ink-secondary);
-      line-height: 1.65;
-    }
-
-    .latest-post { margin-top: 24px; }
-
-    /* === Links === */
-    a {
-      color: var(--ink-primary);
-      text-decoration: none;
-      transition: color var(--duration-fast) var(--ease-snap);
-    }
-
-    a:hover {
-      color: var(--ink-secondary);
-    }
-
-    /* === Focus States for Accessibility === */
-    :focus-visible {
-      outline: 2px solid var(--ink-tertiary);
-      outline-offset: 2px;
-    }
-
   </style>
 </head>
 <body>
-  <div class="container">
-    <aside class="sidebar-left">
-      <h1 class="site-title">Building in Public</h1>
-      <p class="site-description">A lightweight accountability tracker for daily progress.</p>
-      <p class="site-theory">It exists under the theory that doing anything consistently for a year is bound to spark change.</p>
-    </aside>
-    <main class="calendar-section">
-      <h2 class="calendar-title">Days of January 1st to December 31st</h2>
-      <div class="calendar-grid" id="calendar-grid">
-        <!-- Calendar squares populated by JS -->
-      </div>
-    </main>
-    <aside class="sidebar-right">
-      <div class="author-name">Mikeishiring</div>
-      <p class="author-bio">Shipping daily, one commit at a time</p>
-      <div class="latest-post">
-        <div class="latest-divider">--------------------------------------</div>
-        <div class="latest-date">January 21</div>
-        <a href="day/2026-01-21/" class="latest-media-link">
-          <img src="day/2026-01-21/2026-01-21T12-52-55Z_tg_6.jpg" alt="Latest post" class="latest-media" />
-        </a>
-        <p class="latest-text">Training an agent on agency is never fun but here we are. #Public</p>
-      </div>
-    </aside>
-  </div>
-  <script>
+  <header>
+    <h1>Building in Public</h1>
+    <p>A lightweight accountability tracker for daily progress.</p>
+  </header>
+  <main>
+    <article class="post">
+  <div class="meta"><span class="date">2026-01-26</span><span class="skill">other</span></div>
+  <div class="text">Purning further</div>
+  <div class="media"><img src="media/2026-01-26/2026-01-26T03-26-17Z_tg_15.jpg" alt="" loading="lazy" /></div>
+</article>
+<article class="post">
+  <div class="meta"><span class="date">2026-01-21</span><span class="skill">other</span></div>
+  <div class="text">Training an agent on agency is never fun but here we are.</div>
+  <div class="media"><img src="media/2026-01-21/2026-01-21T12-52-55Z_tg_6.jpg" alt="" loading="lazy" /></div>
+</article>
 
-    fetch('activity.json')
-      .then(r => r.json())
-      .then(data => {
-        const grid = document.getElementById('calendar-grid');
-        const dayMap = {};
-        data.days.forEach(d => { dayMap[d.date] = d; });
-
-        const year = new Date().getFullYear();
-        const startDate = new Date(year, 0, 1);
-        const endDate = new Date(year, 11, 31);
-
-        // Determine rarity based on content count
-        function getRarity(count) {
-          if (count >= 10) return 'legendary';
-          if (count >= 5) return 'epic';
-          if (count >= 3) return 'rare';
-          return '';
-        }
-
-        let dayOfYear = 1;
-        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-          const dateStr = d.toISOString().split('T')[0];
-          const dayData = dayMap[dateStr];
-
-          const cell = document.createElement('a');
-          let classes = 'day-cell';
-          if (dayData) {
-            classes += ' has-content';
-            const rarity = getRarity(dayData.count);
-            if (rarity) classes += ' rarity-' + rarity;
-          } else {
-            classes += ' empty';
-          }
-          cell.className = classes;
-          cell.href = dayData ? 'day/' + dateStr + '/' : '#';
-          if (!dayData) cell.style.pointerEvents = 'none';
-
-          const num = document.createElement('span');
-          num.className = 'day-number';
-          num.textContent = dayOfYear;
-          cell.appendChild(num);
-
-          if (dayData && dayData.thumb) {
-            const img = document.createElement('img');
-            img.className = 'day-thumb';
-            img.src = 'day/' + dateStr + '/' + dayData.thumb;
-            img.alt = dateStr;
-            img.loading = 'lazy';
-            cell.appendChild(img);
-          }
-
-          grid.appendChild(cell);
-          dayOfYear++;
-        }
-      });
-
-  </script>
+  </main>
 </body>
 </html>

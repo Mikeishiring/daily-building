@@ -1,15 +1,119 @@
 {
-  "generated_at": "2026-01-21T00:00:00.0000000+00:00",
+  "generated_at": "2026-01-25T18:34:05.9399139+00:00",
   "days": [
     {
-      "date": "2026-01-21",
+      "date": "2026-01-25",
       "count": 2,
-      "thumb": "2026-01-21T12-52-55Z_tg_6.jpg"
+      "thumb": null,
+      "entries": [
+        {
+          "category": "Shipped",
+          "text": "ProgressOS now has a project sidebar showing live progress bars for all active projects. Each bar updates based on the selected day in the timeline. #Public",
+          "tags": [],
+          "images": []
+        },
+        {
+          "category": "Building",
+          "text": "Working on the Twitter follower graph visualization - exploring ways to show network growth through mutual connections. API access is tricky but making progress with mock data. #Public",
+          "tags": [],
+          "images": []
+        }
+      ],
+      "description": null
+    },
+    {
+      "date": "2026-01-24",
+      "count": 2,
+      "thumb": null,
+      "entries": [
+        {
+          "category": "Started",
+          "text": "Kicked off the Social Graph project - want to visualize my Twitter network and see which communities I grew into over time. The idea is to trace back through mutual follows to find 'entry points' into each community. #Public",
+          "tags": [],
+          "images": []
+        },
+        {
+          "category": "Learned",
+          "text": "Twitter API v2 has strict rate limits and requires Project enrollment for follower data. Free tier gives you user lookups but not full network access. Exploring browser-based scraping as a fallback. #Public",
+          "tags": [],
+          "images": []
+        }
+      ],
+      "description": null
+    },
+    {
+      "date": "2026-01-23",
+      "count": 1,
+      "thumb": null,
+      "entries": [
+        {
+          "category": "Shipped",
+          "text": "Timeless Wiki is now in polish mode - the MVP is done and I'm refining the demo experience. This one's about creating evergreen content that stays relevant regardless of when you read it. #Public",
+          "tags": [],
+          "images": []
+        }
+      ],
+      "description": null
+    },
+    {
+      "date": "2026-01-22",
+      "count": 2,
+      "thumb": null,
+      "entries": [
+        {
+          "category": "Shipped",
+          "text": "Web3 Jobs is production-ready! Built a job board that aggregates Web3 opportunities. The scrapers are humming and the frontend is clean. Now it's about polish and getting users. #Public",
+          "tags": [],
+          "images": []
+        },
+        {
+          "category": "Shipped",
+          "text": "Talent Passport hit MVP - the CV parser is working and we can generate structured talent profiles from uploaded resumes. Next step is matching candidates to opportunities. #Public",
+          "tags": [],
+          "images": []
+        }
+      ],
+      "description": null
+    },
+    {
+      "date": "2026-01-21",
+      "count": 1,
+      "thumb": null,
+      "entries": [
+        {
+          "category": "Shipped",
+          "text": "Training an agent on agency is never fun but here we are. #Public",
+          "tags": [],
+          "images": ["2026-01-21T12-52-55Z_tg_6.jpg"]
+        }
+      ],
+      "description": null
     },
     {
       "date": "2026-01-20",
-      "count": 5,
-      "thumb": "telegram_070904.jpg"
+      "count": 3,
+      "thumb": null,
+      "entries": [
+        {
+          "category": "Shipped",
+          "text": "Setup INPROGRESS OS - automated daily accountability system #Public",
+          "tags": [],
+          "images": ["telegram_070904.jpg"]
+        },
+        {
+          "category": "Shipped",
+          "text": "I'm shippinningggg - created a website to send daily updates with photos of what I'm building through TG. Fingers crossed I keep this up #Public",
+          "tags": [],
+          "images": ["telegram_071532.jpg"]
+        },
+        {
+          "category": "Shipped",
+          "text": "Ashby MCP - everyone wants to use tools through Slack so I made an MCP and then ran it through an LLM (claude) with Backend on Railway so you can ping the bot in channel. Ashby APIs suck so I have to keep testing and fixing. I wish I could do the ralph loop well or at least had the $ to find out. #Public",
+          "tags": [],
+          "images": []
+        }
+      ],
+      "description": null
     }
   ]
 }
