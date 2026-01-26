@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-25T18:34:05.9399139+00:00",
+  "generated_at": "2026-01-26T17:27:30.6906087\u002B00:00",
   "projects": [
     {
       "name": "ProgressOS",
@@ -12,131 +12,43 @@
       "current_goal": "GitHub sidebar complete",
       "last_updated": "2026-01-25",
       "stages": [
-        { "name": "Research", "description": "Exploring ideas and gathering requirements" },
-        { "name": "Foundation", "description": "Core architecture and setup" },
-        { "name": "MVP", "description": "Minimum viable product" },
-        { "name": "Polish", "description": "Bug fixes and UX improvements" },
-        { "name": "Launch", "description": "Public release" }
+        {
+          "name": "Research",
+          "description": "Exploring ideas and gathering requirements"
+        },
+        {
+          "name": "Foundation",
+          "description": "Core architecture and setup"
+        },
+        {
+          "name": "MVP",
+          "description": "Minimum viable product"
+        },
+        {
+          "name": "Polish",
+          "description": "Bug fixes and UX improvements"
+        },
+        {
+          "name": "Launch",
+          "description": "Public release"
+        }
       ],
       "history": [
-        { "date": "2026-01-17", "stage": 1, "goal": "Initial concept" },
-        { "date": "2026-01-19", "stage": 2, "goal": "Core CLI and parser" },
-        { "date": "2026-01-25", "stage": 3, "goal": "GitHub sidebar complete" }
-      ]
-    },
-    {
-      "name": "Ashby MCP",
-      "github_repo": "Mikeishiring/ashby-mcp",
-      "github_url": "https://github.com/Mikeishiring/ashby-mcp",
-      "progress_percent": 60,
-      "current_stage": 3,
-      "total_stages": 5,
-      "stage_name": "MVP",
-      "current_goal": "Slack bot integration live",
-      "last_updated": "2026-01-24",
-      "stages": [
-        { "name": "Research", "description": "Exploring ideas and gathering requirements" },
-        { "name": "Foundation", "description": "Core architecture and setup" },
-        { "name": "MVP", "description": "Minimum viable product" },
-        { "name": "Polish", "description": "Bug fixes and UX improvements" },
-        { "name": "Launch", "description": "Public release" }
-      ],
-      "history": [
-        { "date": "2026-01-19", "stage": 1, "goal": "Initial MCP setup" },
-        { "date": "2026-01-20", "stage": 2, "goal": "Railway backend deployed" },
-        { "date": "2026-01-24", "stage": 3, "goal": "Slack bot integration live" }
-      ]
-    },
-    {
-      "name": "Web3 Jobs",
-      "github_repo": null,
-      "github_url": null,
-      "progress_percent": 80,
-      "current_stage": 4,
-      "total_stages": 5,
-      "stage_name": "Polish",
-      "current_goal": "Production-ready job board",
-      "last_updated": "2026-01-22",
-      "stages": [
-        { "name": "Research", "description": "Exploring ideas and gathering requirements" },
-        { "name": "Foundation", "description": "Core architecture and setup" },
-        { "name": "MVP", "description": "Minimum viable product" },
-        { "name": "Polish", "description": "Bug fixes and UX improvements" },
-        { "name": "Launch", "description": "Public release" }
-      ],
-      "history": [
-        { "date": "2026-01-01", "stage": 1, "goal": "Initial research" },
-        { "date": "2026-01-08", "stage": 2, "goal": "Building scrapers" },
-        { "date": "2026-01-15", "stage": 3, "goal": "MVP with frontend" },
-        { "date": "2026-01-22", "stage": 4, "goal": "Production-ready job board" }
-      ]
-    },
-    {
-      "name": "Social Graph",
-      "github_repo": null,
-      "github_url": null,
-      "progress_percent": 20,
-      "current_stage": 1,
-      "total_stages": 5,
-      "stage_name": "Research",
-      "current_goal": "Twitter network visualization",
-      "last_updated": "2026-01-24",
-      "stages": [
-        { "name": "Research", "description": "Exploring ideas and gathering requirements" },
-        { "name": "Foundation", "description": "Core architecture and setup" },
-        { "name": "MVP", "description": "Minimum viable product" },
-        { "name": "Polish", "description": "Bug fixes and UX improvements" },
-        { "name": "Launch", "description": "Public release" }
-      ],
-      "history": [
-        { "date": "2026-01-24", "stage": 1, "goal": "Twitter network visualization" }
-      ]
-    },
-    {
-      "name": "Talent Passport",
-      "github_repo": null,
-      "github_url": null,
-      "progress_percent": 60,
-      "current_stage": 3,
-      "total_stages": 5,
-      "stage_name": "MVP",
-      "current_goal": "CV parsing & talent profiles",
-      "last_updated": "2026-01-22",
-      "stages": [
-        { "name": "Research", "description": "Exploring ideas and gathering requirements" },
-        { "name": "Foundation", "description": "Core architecture and setup" },
-        { "name": "MVP", "description": "Minimum viable product" },
-        { "name": "Polish", "description": "Bug fixes and UX improvements" },
-        { "name": "Launch", "description": "Public release" }
-      ],
-      "history": [
-        { "date": "2026-01-10", "stage": 1, "goal": "Schema design" },
-        { "date": "2026-01-17", "stage": 2, "goal": "Parsing engine" },
-        { "date": "2026-01-22", "stage": 3, "goal": "CV parsing & talent profiles" }
-      ]
-    },
-    {
-      "name": "Timeless Wiki",
-      "github_repo": null,
-      "github_url": null,
-      "progress_percent": 80,
-      "current_stage": 4,
-      "total_stages": 5,
-      "stage_name": "Polish",
-      "current_goal": "Demo polish in progress",
-      "last_updated": "2026-01-23",
-      "stages": [
-        { "name": "Research", "description": "Exploring ideas and gathering requirements" },
-        { "name": "Foundation", "description": "Core architecture and setup" },
-        { "name": "MVP", "description": "Minimum viable product" },
-        { "name": "Polish", "description": "Bug fixes and UX improvements" },
-        { "name": "Launch", "description": "Public release" }
-      ],
-      "history": [
-        { "date": "2026-01-05", "stage": 1, "goal": "Concept design" },
-        { "date": "2026-01-12", "stage": 2, "goal": "Design system" },
-        { "date": "2026-01-18", "stage": 3, "goal": "MVP Build" },
-        { "date": "2026-01-23", "stage": 4, "goal": "Demo polish in progress" }
+        {
+          "date": "2026-01-17",
+          "stage": 1,
+          "goal": "Initial concept"
+        },
+        {
+          "date": "2026-01-19",
+          "stage": 2,
+          "goal": "Core CLI and parser"
+        },
+        {
+          "date": "2026-01-25",
+          "stage": 3,
+          "goal": "GitHub sidebar complete"
+        }
       ]
     },
     {
@@ -150,13 +62,228 @@
       "current_goal": "Research phase",
       "last_updated": "2026-01-25",
       "stages": [
-        { "name": "Research", "description": "Exploring ideas and gathering requirements" },
-        { "name": "Foundation", "description": "Core architecture and setup" },
-        { "name": "MVP", "description": "Minimum viable product" },
-        { "name": "Polish", "description": "Bug fixes and UX improvements" },
-        { "name": "Launch", "description": "Public release" }
+        {
+          "name": "Research",
+          "description": "Exploring ideas and gathering requirements"
+        },
+        {
+          "name": "Foundation",
+          "description": "Core architecture and setup"
+        },
+        {
+          "name": "MVP",
+          "description": "Minimum viable product"
+        },
+        {
+          "name": "Polish",
+          "description": "Bug fixes and UX improvements"
+        },
+        {
+          "name": "Launch",
+          "description": "Public release"
+        }
       ],
       "history": []
+    },
+    {
+      "name": "Web3 Jobs",
+      "github_repo": null,
+      "github_url": null,
+      "progress_percent": 80,
+      "current_stage": 4,
+      "total_stages": 5,
+      "stage_name": "Polish",
+      "current_goal": "Production-ready job board",
+      "last_updated": "2026-01-22",
+      "stages": [
+        {
+          "name": "Research",
+          "description": "Exploring ideas and gathering requirements"
+        },
+        {
+          "name": "Foundation",
+          "description": "Core architecture and setup"
+        },
+        {
+          "name": "MVP",
+          "description": "Minimum viable product"
+        },
+        {
+          "name": "Polish",
+          "description": "Bug fixes and UX improvements"
+        },
+        {
+          "name": "Launch",
+          "description": "Public release"
+        }
+      ],
+      "history": [
+        {
+          "date": "2026-01-01",
+          "stage": 1,
+          "goal": "Initial research"
+        },
+        {
+          "date": "2026-01-08",
+          "stage": 2,
+          "goal": "Building scrapers"
+        },
+        {
+          "date": "2026-01-15",
+          "stage": 3,
+          "goal": "MVP with frontend"
+        },
+        {
+          "date": "2026-01-22",
+          "stage": 4,
+          "goal": "Production-ready job board"
+        }
+      ]
+    },
+    {
+      "name": "Social Graph",
+      "github_repo": null,
+      "github_url": null,
+      "progress_percent": 20,
+      "current_stage": 1,
+      "total_stages": 5,
+      "stage_name": "Research",
+      "current_goal": "Twitter network visualization",
+      "last_updated": "2026-01-24",
+      "stages": [
+        {
+          "name": "Research",
+          "description": "Exploring ideas and gathering requirements"
+        },
+        {
+          "name": "Foundation",
+          "description": "Core architecture and setup"
+        },
+        {
+          "name": "MVP",
+          "description": "Minimum viable product"
+        },
+        {
+          "name": "Polish",
+          "description": "Bug fixes and UX improvements"
+        },
+        {
+          "name": "Launch",
+          "description": "Public release"
+        }
+      ],
+      "history": [
+        {
+          "date": "2026-01-24",
+          "stage": 1,
+          "goal": "Twitter network visualization"
+        }
+      ]
+    },
+    {
+      "name": "Talent Passport",
+      "github_repo": null,
+      "github_url": null,
+      "progress_percent": 60,
+      "current_stage": 3,
+      "total_stages": 5,
+      "stage_name": "MVP",
+      "current_goal": "CV parsing \u0026 talent profiles",
+      "last_updated": "2026-01-22",
+      "stages": [
+        {
+          "name": "Research",
+          "description": "Exploring ideas and gathering requirements"
+        },
+        {
+          "name": "Foundation",
+          "description": "Core architecture and setup"
+        },
+        {
+          "name": "MVP",
+          "description": "Minimum viable product"
+        },
+        {
+          "name": "Polish",
+          "description": "Bug fixes and UX improvements"
+        },
+        {
+          "name": "Launch",
+          "description": "Public release"
+        }
+      ],
+      "history": [
+        {
+          "date": "2026-01-10",
+          "stage": 1,
+          "goal": "Schema design"
+        },
+        {
+          "date": "2026-01-17",
+          "stage": 2,
+          "goal": "Parsing engine"
+        },
+        {
+          "date": "2026-01-22",
+          "stage": 3,
+          "goal": "CV parsing \u0026 talent profiles"
+        }
+      ]
+    },
+    {
+      "name": "Timeless Wiki",
+      "github_repo": null,
+      "github_url": null,
+      "progress_percent": 80,
+      "current_stage": 4,
+      "total_stages": 5,
+      "stage_name": "Polish",
+      "current_goal": "Demo polish in progress",
+      "last_updated": "2026-01-23",
+      "stages": [
+        {
+          "name": "Research",
+          "description": "Exploring ideas and gathering requirements"
+        },
+        {
+          "name": "Foundation",
+          "description": "Core architecture and setup"
+        },
+        {
+          "name": "MVP",
+          "description": "Minimum viable product"
+        },
+        {
+          "name": "Polish",
+          "description": "Bug fixes and UX improvements"
+        },
+        {
+          "name": "Launch",
+          "description": "Public release"
+        }
+      ],
+      "history": [
+        {
+          "date": "2026-01-05",
+          "stage": 1,
+          "goal": "Concept design"
+        },
+        {
+          "date": "2026-01-12",
+          "stage": 2,
+          "goal": "Design system"
+        },
+        {
+          "date": "2026-01-18",
+          "stage": 3,
+          "goal": "MVP Build"
+        },
+        {
+          "date": "2026-01-23",
+          "stage": 4,
+          "goal": "Demo polish in progress"
+        }
+      ]
     }
   ]
 }

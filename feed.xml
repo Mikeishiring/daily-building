@@ -6,6 +6,13 @@
     <description>A lightweight accountability tracker for daily progress.</description>
     <atom:link href="http://localhost/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>2026-01-26: 3 updates</title>
+      <link>http://localhost/day/2026-01-26/</link>
+      <guid isPermaLink="true">http://localhost/day/2026-01-26/</guid>
+      <description>Purning further #Public</description>
+      <pubDate>Mon, 26 Jan 2026 00:00:00 GMT</pubDate>
+    </item>
+    <item>
       <title>2026-01-21: 1 updates</title>
       <link>http://localhost/day/2026-01-21/</link>
       <guid isPermaLink="true">http://localhost/day/2026-01-21/</guid>

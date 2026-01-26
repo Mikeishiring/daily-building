@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="120" viewBox="0 0 600 120">
   <rect width="600" height="120" fill="#09090b" />
   <text x="20" y="28" font-size="12" font-family="'SF Mono', Consolas, monospace" fill="#71717a">ACTIVITY</text>
-  <rect x="20" y="50" width="18" height="18" rx="3" fill="rgb(34, 85, 94)" opacity="0.5" />
-  <rect x="42" y="50" width="18" height="18" rx="3" fill="rgb(34, 141, 94)" opacity="0.8" />
-  <text x="20" y="100" font-size="11" font-family="Inter, system-ui" fill="#a1a1aa">2 days tracked</text>
+  <rect x="20" y="50" width="18" height="18" rx="3" fill="rgb(34, 141, 94)" opacity="0.8" />
+  <rect x="42" y="50" width="18" height="18" rx="3" fill="rgb(34, 85, 94)" opacity="0.5" />
+  <rect x="64" y="50" width="18" height="18" rx="3" fill="rgb(34, 141, 94)" opacity="0.8" />
+  <text x="20" y="100" font-size="11" font-family="Inter, system-ui" fill="#a1a1aa">3 days tracked</text>
 </svg>
