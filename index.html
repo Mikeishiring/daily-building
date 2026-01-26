@@ -7,11 +7,47 @@
   <meta name="description" content="A lightweight accountability tracker for daily progress." />
   <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="feed.xml" />
   <style>
-    :root { --bg: #0a0a0a; --bg-panel: #111; --text: #e0e0e0; --text-muted: #666; --accent: #ff4500; --border: #222; --block-inactive: #1a1a1a; --block-active: #ff4500; }
-    html.light { --bg: #f5f5f5; --bg-panel: #fff; --text: #1a1a1a; --text-muted: #888; --accent: #e63e00; --border: #ddd; --block-inactive: #e0e0e0; --block-active: #e63e00; }
+    :root { --bg: #0a0a0a; --bg-panel: #111; --text: #e0e0e0; --text-muted: #666; --accent: #ff4500; --border: #222; --block-inactive: #1a1a1a; --block-active: #ff4500; --bar-glow: rgba(255, 69, 0, 0.4); }
+    html.light { --bg: #f5f5f5; --bg-panel: #fff; --text: #1a1a1a; --text-muted: #888; --accent: #e63e00; --border: #ddd; --block-inactive: #e0e0e0; --block-active: #e63e00; --bar-glow: rgba(230, 62, 0, 0.3); }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Courier New', Courier, monospace; background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; overflow-x: hidden; }
-    .layout { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+    .layout { display: flex; flex-direction: row; min-height: 100vh; min-height: 100dvh; }
+    .main-content { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+
+    /* Activity Sidebar */
+    .activity-sidebar { width: 200px; background: var(--bg-panel); border-right: 1px solid var(--border); padding: 16px 12px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; overflow-y: auto; }
+    .sidebar-title { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 4px; }
+    .contribution-chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .contrib-day { width: 100%; aspect-ratio: 1; background: var(--block-inactive); border-radius: 2px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+    .contrib-day.active { background: var(--accent); }
+    .contrib-day.active::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%); }
+    .contrib-day:hover { transform: scale(1.2); z-index: 5; box-shadow: 0 0 8px var(--bar-glow); }
+
+    /* Streak Counter */
+    .streak-counter { text-align: center; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .streak-value { font-size: 48px; font-weight: 700; color: var(--accent); line-height: 1; text-shadow: 0 0 20px var(--bar-glow); animation: pulse-glow 2s ease-in-out infinite; }
+    @keyframes pulse-glow { 0%, 100% { text-shadow: 0 0 20px var(--bar-glow); } 50% { text-shadow: 0 0 40px var(--bar-glow), 0 0 60px var(--bar-glow); } }
+    .streak-label { font-size: 9px; color: var(--text-muted); letter-spacing: 2px; margin-top: 4px; }
+
+    /* Weekly Progress Bars */
+    .weekly-bars { display: flex; flex-direction: column; gap: 8px; }
+    .week-bar { display: flex; align-items: center; gap: 8px; }
+    .week-label { font-size: 8px; color: var(--text-muted); width: 24px; flex-shrink: 0; text-align: right; }
+    .bar-track { flex: 1; height: 12px; background: var(--block-inactive); border-radius: 6px; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #ff6b3d); border-radius: 6px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+    .bar-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2s ease-in-out infinite; }
+    @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+    .bar-fill.fluid { animation: fluid-fill 0.8s ease-out forwards; }
+    @keyframes fluid-fill { 0% { width: 0; } }
+
+    /* Total Stats */
+    .total-stats { display: flex; justify-content: space-around; padding-top: 12px; border-top: 1px solid var(--border); }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 20px; font-weight: 700; color: var(--text); display: block; }
+    .stat-label { font-size: 8px; color: var(--text-muted); letter-spacing: 1px; }
+
+    /* Hide sidebar on mobile */
+    @media (max-width: 768px) { .activity-sidebar { display: none; } .layout { flex-direction: column; } }
     .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg-panel); }
     .brand { display: flex; align-items: center; gap: 8px; }
     .brand-logo { width: 28px; height: 28px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #000; }
@@ -86,59 +122,87 @@
 </head>
 <body>
   <div class="layout">
-    <header class="header">
-      <div class="brand">
-        <div class="brand-logo">P</div>
-        <span class="brand-name">Building in Public</span>
-        <span class="brand-sub">by Mikeishiring</span>
+    <aside class="activity-sidebar" id="activitySidebar">
+      <div class="sidebar-title">ACTIVITY</div>
+      <div class="contribution-chart" id="contributionChart">
+        <!-- Populated by JS -->
       </div>
-      <div class="header-actions">
-        <div class="social-icons">
-          <a href="https://twitter.com/mikeishiring" target="_blank" rel="noopener" class="social-icon" aria-label="Twitter">
-            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </a>
-          <a href="https://github.com/mikeishiring" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
-            <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-          </a>
+      <div class="streak-counter">
+        <div class="streak-value" id="streakValue">0</div>
+        <div class="streak-label">DAY STREAK</div>
+      </div>
+      <div class="weekly-bars" id="weeklyBars">
+        <!-- Populated by JS -->
+      </div>
+      <div class="total-stats">
+        <div class="stat-item">
+          <span class="stat-value" id="totalDays">0</span>
+          <span class="stat-label">DAYS</span>
         </div>
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀️</button>
+        <div class="stat-item">
+          <span class="stat-value" id="totalEntries">0</span>
+          <span class="stat-label">ENTRIES</span>
+        </div>
       </div>
-    </header>
-    <main class="content-viewer" id="contentViewer">
-      <div class="day-header">
-        <span class="day-number" id="dayNumber">DAY 001</span>
-        <span class="day-date" id="dayDate">2026-01-01</span>
-      </div>
-      <div class="entries-container" id="entriesContainer"></div>
-    </main>
-    <nav class="timeline-strip" id="timelineStrip">
-      <button class="nav-arrow" id="navPrev" aria-label="Previous day">◄</button>
-      <div class="strip-container" id="stripContainer"></div>
-      <button class="nav-arrow" id="navNext" aria-label="Next day">►</button>
-    </nav>
-    <footer class="year-minimap" id="yearMinimap">
-      <div class="minimap-months">
-        <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
-        <span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span>
-      </div>
-      <div class="minimap-grid" id="minimapGrid"></div>
-    </footer>
+    </aside>
+    <div class="main-content">
+      <header class="header">
+        <div class="brand">
+          <div class="brand-logo">P</div>
+          <span class="brand-name">Building in Public</span>
+          <span class="brand-sub">by Mikeishiring</span>
+        </div>
+        <div class="header-actions">
+          <div class="social-icons">
+            <a href="https://twitter.com/mikeishiring" target="_blank" rel="noopener" class="social-icon" aria-label="Twitter">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://github.com/mikeishiring" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
+              <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            </a>
+          </div>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀️</button>
+        </div>
+      </header>
+      <main class="content-viewer" id="contentViewer">
+        <div class="day-header">
+          <span class="day-number" id="dayNumber">DAY 001</span>
+          <span class="day-date" id="dayDate">2026-01-01</span>
+        </div>
+        <div class="entries-container" id="entriesContainer"></div>
+      </main>
+      <nav class="timeline-strip" id="timelineStrip">
+        <button class="nav-arrow" id="navPrev" aria-label="Previous day">◄</button>
+        <div class="strip-container" id="stripContainer"></div>
+        <button class="nav-arrow" id="navNext" aria-label="Next day">►</button>
+      </nav>
+      <footer class="year-minimap" id="yearMinimap">
+        <div class="minimap-months">
+          <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
+          <span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span>
+        </div>
+        <div class="minimap-grid" id="minimapGrid"></div>
+      </footer>
+    </div>
   </div>
   <script>
     fetch('activity.json')
       .then(r => r.json())
       .then(data => {
         const dayData = {};
+        let totalEntries = 0;
         data.days.forEach(d => {
           const date = new Date(d.date);
           const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-          dayData[dayOfYear] = { date: d.date, entries: d.entries || [{ category: 'Entry', text: d.count + ' entries', tags: [], images: [] }] };
+          const entryCount = d.entries ? d.entries.length : (d.count || 1);
+          totalEntries += entryCount;
+          dayData[dayOfYear] = { date: d.date, entries: d.entries || [{ category: 'Entry', text: d.count + ' entries', tags: [], images: [] }], entryCount };
         });
-        initTimeline(dayData);
+        initTimeline(dayData, data.days.length, totalEntries);
       })
-      .catch(err => { console.error('Failed to load:', err); initTimeline({}); });
+      .catch(err => { console.error('Failed to load:', err); initTimeline({}, 0, 0); });
 
-    function initTimeline(dayData) {
+    function initTimeline(dayData, totalDays, totalEntries) {
       const year = new Date().getFullYear();
       const daysInYear = 365;
       const today = new Date();
@@ -150,6 +214,62 @@
       const entriesContainer = document.getElementById('entriesContainer');
       const stripContainer = document.getElementById('stripContainer');
       const minimapGrid = document.getElementById('minimapGrid');
+      const contributionChart = document.getElementById('contributionChart');
+      const weeklyBars = document.getElementById('weeklyBars');
+      const streakValue = document.getElementById('streakValue');
+      const totalDaysEl = document.getElementById('totalDays');
+      const totalEntriesEl = document.getElementById('totalEntries');
+
+      // Calculate streak
+      function calcStreak() {
+        let streak = 0;
+        for (let d = todayDayOfYear; d >= 1; d--) {
+          if (dayData[d]) streak++;
+          else break;
+        }
+        return streak;
+      }
+
+      // Render contribution chart (last 7 weeks)
+      function renderContributionChart() {
+        contributionChart.innerHTML = '';
+        const weeksToShow = 7;
+        const startDay = Math.max(1, todayDayOfYear - (weeksToShow * 7));
+        for (let d = startDay; d <= todayDayOfYear; d++) {
+          const block = document.createElement('div');
+          block.className = 'contrib-day' + (dayData[d] ? ' active' : '');
+          block.title = new Date(year, 0, d).toLocaleDateString();
+          contributionChart.appendChild(block);
+        }
+      }
+
+      // Render weekly progress bars
+      function renderWeeklyBars() {
+        weeklyBars.innerHTML = '';
+        const weeks = ['W1', 'W2', 'W3', 'W4'];
+        const currentWeek = Math.ceil(todayDayOfYear / 7);
+        for (let i = 0; i < 4; i++) {
+          const weekNum = Math.max(1, currentWeek - 3 + i);
+          const weekStart = (weekNum - 1) * 7 + 1;
+          const weekEnd = Math.min(weekNum * 7, daysInYear);
+          let activeDays = 0;
+          for (let d = weekStart; d <= weekEnd; d++) {
+            if (dayData[d]) activeDays++;
+          }
+          const pct = Math.round((activeDays / 7) * 100);
+          const bar = document.createElement('div');
+          bar.className = 'week-bar';
+          bar.innerHTML = '<span class="week-label">W' + weekNum + '</span><div class="bar-track"><div class="bar-fill fluid" style="width:' + pct + '%"></div></div>';
+          weeklyBars.appendChild(bar);
+        }
+      }
+
+      // Update stats
+      function updateStats() {
+        streakValue.textContent = calcStreak();
+        totalDaysEl.textContent = totalDays;
+        totalEntriesEl.textContent = totalEntries;
+      }
 
       function renderContent() {
         const dayNum = selectedDayNum;
@@ -248,6 +368,9 @@
       renderContent();
       renderStrip();
       renderMinimap();
+      renderContributionChart();
+      renderWeeklyBars();
+      updateStats();
     }
 </script>
 </body>
